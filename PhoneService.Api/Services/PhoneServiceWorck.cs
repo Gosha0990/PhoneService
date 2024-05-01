@@ -3,7 +3,7 @@ using PhoneService.Core.Interfaces;
 
 namespace PhoneService.Api.Services
 {
-    internal class PhoneServiceWorck
+    public class PhoneServiceWorck
     {
         private readonly IPhoneServiceCore _phoneServiceCore;
 
@@ -26,7 +26,7 @@ namespace PhoneService.Api.Services
                         TracId = phoneConverResponse.TraceId 
                     });
 
-                    if(pResult is not null)
+                    if(pResult is not null && pResult.Phone > 0)
                     {
                         result.Success = true;
                         result.PhoneNumber = pResult.Phone;

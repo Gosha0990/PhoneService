@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PhoneService.Api.Models;
 using PhoneService.Api.Services;
+using System.Diagnostics;
+using System.Numerics;
 
 namespace PhoneService.Api.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    internal class PhoneServiceController : ControllerBase
+    public class PhoneServiceController : ControllerBase
     {
         private readonly PhoneServiceWorck _phoneServiceWorck;
-        private readonly SemaphoreService _semaphoreService;
 
-        public PhoneServiceController(PhoneServiceWorck phoneServiceWorck, SemaphoreService semaphoreService) 
+        public PhoneServiceController(PhoneServiceWorck phoneServiceWorck) 
         {
             _phoneServiceWorck = phoneServiceWorck;
-            _semaphoreService = semaphoreService;
         }
 
         [HttpGet]
@@ -22,7 +22,12 @@ namespace PhoneService.Api.Controllers
         {
             var result = new PhoneConvertResponse();
 
-            _phoneServiceWorck.PhoneConvertToNumber(new() { Phone = phone, TraceId = TraceId });
+            var rTask = await Task.Run(() => _phoneServiceWorck.PhoneConvertToNumber(new() { Phone = phone, TraceId = TraceId }));
+
+            if(rTask is not null) 
+            { 
+                result = rTask;
+            }
 
             return Ok(result);
         }
@@ -30,7 +35,16 @@ namespace PhoneService.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostPhoneConvert(PhoneConvertRequest phoneConvertRequest)
         {
-            return Ok();
+            var result = new PhoneConvertResponse();
+
+            var rTask = await Task.Run(() => _phoneServiceWorck.PhoneConvertToNumber(phoneConvertRequest));
+
+            if (rTask is not null)
+            {
+                result = rTask;
+            }
+
+            return Ok(result);
         }
     }
 }

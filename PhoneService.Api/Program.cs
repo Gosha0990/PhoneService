@@ -1,5 +1,5 @@
 using PhoneService.Api.Services;
-using PhoneService.Core.Interfaces;
+using PhoneService.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<PhoneServiceWorck>();
-builder.Services.AddSingleton<SemaphoreService>();
-builder.Services.AddSingleton<IPhoneServiceCore>();
+builder.Services.AddPhoneServiceCore();
 
 var app = builder.Build();
 
